@@ -18,15 +18,15 @@ class ModelAuditory(models.Model):
     active = models.BooleanField(default=True)
 
     class Meta:
-        abstract = True
+        abstract = True  # Para no crear la tabla
 
 
-class Category(models.Model):
+class Category(ModelAuditory):
     description = models.CharField(max_length=50, unique=True)
-    date_crea = models.DateTimeField(auto_now_add=True)
-    date_updat = models.DateTimeField(auto_now=True)
+    # date_crea = models.DateTimeField(auto_now_add=True)
+    # date_updat = models.DateTimeField(auto_now=True)
     # Toma por defecto el valor true cada vez que se cree uno
-    active = models.BooleanField(default=True)
+    # active = models.BooleanField(default=True)
 
     # Retorna una representaciónn de cadena de cualquier objeto. Ese método lo usará tanto python y django para mostrar texto plano cuando se haga referencia a una instancia a un objeto en este caso (Category)
     # Es requerido
@@ -42,3 +42,20 @@ class Category(models.Model):
     # Hacer referencia al modelo en plural en el admin de django
     class Meta:
         verbose_name_plural = "Categories"
+
+
+class Person(ModelAuditory):
+    name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    date_birth = models.DateField(null=False, blank=False)
+
+    def __str__(self):
+        return "{} {}".format(self.name, self.last_name)
+
+    def save(self):
+        self.name = self.name.capitalize()
+        self.last_name = self.last_name.capitalize()
+        super(Person, self).save()
+
+    class Meta:
+        verbose_name_plural = "People"
