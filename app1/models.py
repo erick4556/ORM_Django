@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import date
 
 
 # Clase abstracta, no se crea una tabla en la bd
@@ -49,6 +50,18 @@ class Person(ModelAuditory):
     last_name = models.CharField(max_length=50)
     date_birth = models.DateField(null=False, blank=False)
 
+    @property  # Decorador, no afecta la base de datos
+    def age(self):
+        today = date.today()
+        age = today.year - self.date_birth.year - \
+            ((today.month, today.day) <
+             (self.date_birth.month, self.date_birth.day))
+        return age
+
+    @property
+    def complete_name(self):
+        return "{} {}".format(self.name, self.last_name)
+
     def __str__(self):
         return "{} {}".format(self.name, self.last_name)
 
@@ -59,3 +72,52 @@ class Person(ModelAuditory):
 
     class Meta:
         verbose_name_plural = "People"
+
+
+class Book(ModelAuditory):
+    name = models.CharField(max_length=50)
+    price = models.FloatField(
+        default=1,
+        help_text=" en dólares"
+    )
+    weight = models.PositiveIntegerField(
+        help_text=" en libras"
+    )
+
+    VIRTUAL = 'Virtual'
+    FISIC = 'Físico'
+    OPTIONS = [
+        (VIRTUAL, 'Virtual'),
+        (FISIC, 'Físico'),
+    ]
+    type = models.CharField(
+        max_length=7,
+        choices=OPTIONS,
+        default=FISIC,
+    )
+
+    url_download = models.URLField(default=None)
+
+    def __str__(self):
+        return "{}[{}]".format(self.name, self.type)
+
+    def save(self):
+        self.name = self.name.upper()
+        super(Book, self).save()
+
+    class Meta:
+        verbose_name_plural = "Books"
+        # Lista de campos que va ejecutar el filtro de no repetir tipo de libro
+        unique_together = ('name', 'type')
+
+
+class Progenitor(ModelAuditory):
+    person = models.OneToOneField(Person, on_delete=models.CASCADE)
+    father = models.CharField(max_length=50)
+    mother = models.CharField(max_length=50)
+
+    def _str_(self):
+        return "{} - {} - - {}".format(self.person, self.mother, self.dad)
+
+    class Meta:
+        verbose_name_plural = "Progenitors"
