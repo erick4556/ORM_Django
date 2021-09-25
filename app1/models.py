@@ -29,7 +29,7 @@ class Category(ModelAuditory):
     # Toma por defecto el valor true cada vez que se cree uno
     # active = models.BooleanField(default=True)
 
-    # Retorna una representaciónn de cadena de cualquier objeto. Ese método lo usará tanto python y django para mostrar texto plano cuando se haga referencia a una instancia a un objeto en este caso (Category)
+    # Retorna una representación de cadena de cualquier objeto. Ese método lo usará tanto python y django para mostrar texto plano cuando se haga referencia a una instancia a un objeto en este caso (Category)
     # Es requerido
     def __str__(self):
         return self.description
@@ -121,3 +121,34 @@ class Progenitor(ModelAuditory):
 
     class Meta:
         verbose_name_plural = "Progenitors"
+
+
+class Father(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
+
+
+class Son(models.Model):
+    # PROTECT: no se puede borrar un registro de la tabla padre si tiene registro en la tabla hijo
+    father = models.ForeignKey(Father, on_delete=models.PROTECT)
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return "{} hijo de {}".format(self.name, self.father)
+
+
+class Publication(models.Model):
+    title = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.title
+
+
+class Article(models.Model):
+    headline = models.CharField(max_length=100)
+    publications = models.ManyToManyField(Publication)
+
+    def __str__(self):
+        return self.headline
