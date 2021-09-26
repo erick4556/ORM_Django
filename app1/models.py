@@ -152,3 +152,39 @@ class Article(models.Model):
 
     def __str__(self):
         return self.headline
+
+
+# Uso de self join
+class Employee(models.Model):
+    name = models.CharField(max_length=100)
+    supervisor = models.ForeignKey(
+        'self', null=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return self.name
+
+
+# Otra forma de usar el self join
+class Employee2(models.Model):
+    name = models.CharField(max_length=100)
+    supervisor = models.ForeignKey(
+        'app1.Employee2', null=True, on_delete=models.DO_NOTHING
+    )
+
+    def __str__(self):
+        return self.name
+
+
+# Vincular el modelo a una vista creada
+class ViewFatherSon(models.Model):
+    idfather = models.IntegerField()
+    namefather = models.CharField(max_length=50)
+    idson = models.IntegerField()
+    nameson = models.CharField(max_length=50)
+
+    def __str__(self):
+        return "{} -> {}".format(self.namefather, self.nameson)
+
+    class Meta:
+        managed = False  # Se crea el modelo pero django no va poder manipular este modelo
+        db_table = "view_fatherson"  # Referencia a una tabla
