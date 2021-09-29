@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import date
+from django.utils.text import slugify
 
 
 # Clase abstracta, no se crea una tabla en la bd
@@ -141,9 +142,15 @@ class Son(models.Model):
 
 class Publication(models.Model):
     title = models.CharField(max_length=50)
+    slug = models.SlugField(max_length=60, default="")
 
     def __str__(self):
         return self.title
+
+# Agregar slug
+    def save(self):
+        self.slug = slugify(self.title)
+        super(Publication, self).save()
 
 
 class Article(models.Model):
@@ -188,3 +195,12 @@ class ViewFatherSon(models.Model):
     class Meta:
         managed = False  # Se crea el modelo pero django no va poder manipular este modelo
         db_table = "view_fatherson"  # Referencia a una tabla
+
+
+class NewModel(models.Model):
+    name = models.CharField(max_length=50)
+    # Cambiar el nombre de la columna al que esta escrito en el modelo
+    a = models.CharField(max_length=50, db_column="another_name", default="")
+
+    class Meta:
+        db_table = "new_name"  # Cambiar el nombre de la tabla
