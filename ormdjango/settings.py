@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app1',
+    'inv'
 ]
 
 MIDDLEWARE = [
@@ -82,8 +83,21 @@ DATABASES = {
         'PASSWORD': 'sql',
         'HOST': '127.0.0.1',
         'PORT': '5432',
+    },
+    'db_inv': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'orm_django',
+        'OPTIONS': {
+            'options': '-c search_path=inv'
+        },
+        'USER': 'postgres',
+        'PASSWORD': 'sql',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
+
+DATABASE_ROUTERS = ['ormdjango.dbrouters.DBRouter', ]
 
 
 # Password validation
