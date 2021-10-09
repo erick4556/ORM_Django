@@ -35,11 +35,11 @@ class Category(ModelAuditory):
     def __str__(self):
         return self.description
 
-    # Guardar las descripciones en mayúsucla. Se sobreescribe este método de la clase Model
-    def save(self):
+    # Guardar las descripciones en mayúsucula. Se sobreescribe este método de la clase Model
+    def save(self, *args, **kwargs):
         self.description = self.description.upper()
         # Ejecutado el comando save del modelo padre
-        super(Category, self).save()
+        super(Category, self).save(*args, **kwargs)
 
     # Hacer referencia al modelo en plural en el admin de django
     class Meta:
