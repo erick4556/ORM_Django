@@ -204,3 +204,14 @@ class NewModel(models.Model):
 
     class Meta:
         db_table = "new_name"  # Cambiar el nombre de la tabla
+
+
+class UniqueModel(models.Model):
+    name = models.CharField(max_length=100)
+
+    # Restringir modelo a un único registro
+    # Siempre es bueno cuando se sobreescribe el mmétodo self, pasarle los argumentos *args y **kwargs
+    def save(self, *args, **kwargs):
+        if self.__class__.objects.count():
+            self.pk = self.__class__objects.first().pk
+        super().save(*args, **kwargs)
