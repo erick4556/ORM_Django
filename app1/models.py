@@ -1,3 +1,5 @@
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
 from django.db import models
 from datetime import date
 from django.utils.text import slugify
@@ -215,3 +217,22 @@ class UniqueModel(models.Model):
         if self.__class__.objects.count():
             self.pk = self.__class__objects.first().pk
         super().save(*args, **kwargs)
+
+    # Decorador
+    @classmethod
+    def truncate(cls):
+        from django.db import connection
+        with connection.cursor() as cursor:
+            cursor.execute(
+                'TRUNCATE TABLE "{0}" CASCADE'.format(cls._meta.db_table))
+
+
+# Se dispara cuando se guarda una categoria
+@receiver(post_save, sender=Category)
+def category_saved(sender, **kwargs):
+    print("Category saved")
+
+
+@receiver(post_delete, sender=Category)
+def category_deleted(sender, **kwargs):
+    print("Category deleted")
